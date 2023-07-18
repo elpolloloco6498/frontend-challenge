@@ -1,3 +1,12 @@
+<p align="center">
+    <a href="#gh-dark-mode-only">
+        <img src="https://cdn.digitaldrive.fr/corporate/logo-hd-white.png#gh-dark-mode-only" width="400" alt="Digital Value Logo" />
+    </a>
+    <a href="#gh-light-mode-only">
+        <img src="https://cdn.digitaldrive.fr/corporate/logo-hd.png#gh-light-mode-only" width="400" alt="Digital Value Logo" />
+    </a>
+</p>
+
 # Digital Value Frontend Challenge 
 
 Welcome to the Digital Value Frontend Challenge! Thank for your interest in participating in our selection process.
