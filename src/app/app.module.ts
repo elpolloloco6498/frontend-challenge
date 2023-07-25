@@ -7,19 +7,27 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SelectCategoryComponent } from './select-category/select-category.component';
+import {MatRadioModule} from '@angular/material/radio';
+import { CategoryDataService } from './services/category/category-data.service';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     ScatterChartComponent,
+    SelectCategoryComponent,
   ],
   imports: [
+    MatTreeModule,
+    MatIconModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -29,8 +37,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatDatepickerModule,
     MatNativeDateModule,
     ReactiveFormsModule,
+    MatRadioModule,
   ],
-  providers: [],
+  providers: [
+    CategoryDataService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

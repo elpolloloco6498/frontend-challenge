@@ -3,9 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import * as d3 from 'd3';
 import { map } from 'rxjs';
+import { CategoryDataService } from '../services/category/category-data.service';
 
 interface dataPoint {
-  date: string;
+  date: Date;
   volume: number;
 }
 
@@ -18,21 +19,10 @@ interface dataPoint {
 export class ScatterChartComponent implements OnInit {
 
   ngOnInit(): void {
-    console.log("Test")
-    this.httpClient.get("assets/250162.json").pipe(
-      map((data) => {
-        const dataArray = Object.values(data);
-        return dataArray.map(elt => ({date: new Date(elt.date), volume: elt.volume}))
-      })
-    )
-    .subscribe((data) => {
-      this.data = data
-      console.log(this.data)
-      this.drawChart();
-    });
+    this.refreshGraph()
   }
 
-  constructor(private httpClient: HttpClient, private formBuilder: FormBuilder) {}
+  constructor(private categoryDataService: CategoryDataService, private formBuilder: FormBuilder) {}
 
   dateForm = this.formBuilder.group({
     date: new Date("2022-07-21")
@@ -40,14 +30,32 @@ export class ScatterChartComponent implements OnInit {
 
   title = 'Scatter chart';
   data: any = []
+  currentProductId: number = 250162
 
-  private width = 800;
+  private width = 1200;
   private height = 800;
   private margin = 40;
   private svg: any;
 
   get maxDate() {
     return this.dateForm.get("date")?.value
+  }
+
+  refreshGraph() {
+    this.categoryDataService.getCategory(this.currentProductId)
+    .subscribe((data) => {
+      this.data = data
+      this.drawChart();
+    });
+  }
+
+  changeProduct(productId: number) {
+    this.currentProductId = productId;
+    this.refreshGraph()
+  }
+
+  get maxVolume() {
+    return Math.max(...this.data.map((item: dataPoint) => item.volume))
   }
 
   // Declare the x (horizontal position) scale.
@@ -74,7 +82,7 @@ export class ScatterChartComponent implements OnInit {
 
   // Declare the y (vertical position) scale.
     let y = d3.scaleLinear()
-      .domain([0, 8000000])
+      .domain([0, 1.2 * this.maxVolume])
       .range([this.height - this.margin, this.margin]);
 
     console.log(this.maxDate)
