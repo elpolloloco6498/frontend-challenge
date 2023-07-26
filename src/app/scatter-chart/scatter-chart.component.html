@@ -1,14 +1,14 @@
 <div class="flex flex-row justify-center">
     <div class="flex flex-col">
-        <figure id="scatter"></figure>
+        <figure id="onlineDemand"></figure>
+        <figure id="averageSearchVolume"></figure>
         <form [formGroup]="dateForm">
             <mat-form-field>
-                <input formControlName="date" matInput [matDatepicker]="picker" placeholder="Choose a date" (dateInput)="this.drawChart()">
+                <input formControlName="date" matInput [matDatepicker]="picker" placeholder="Choose a date" (dateInput)="this.drawCharts()">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
         </form>
     </div>
-    <p>{{this.currentProductId}}</p>
     <app-select-category (changeProduct)="changeProduct($event)"></app-select-category>
 </div>

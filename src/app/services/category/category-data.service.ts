@@ -12,7 +12,7 @@ export class CategoryDataService {
         return this.httpClient.get(`assets/api/volumes/${id}.json`).pipe(
             map((data) => {
                 const dataArray = Object.values(data);
-                return dataArray.map(elt => ({date: new Date(elt.date), volume: elt.volume}))
+                return dataArray.map(elt => ({date: new Date(elt.date), value: elt.volume}))
             })
         )
     }
