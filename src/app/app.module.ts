@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { ScatterChartComponent } from './scatter-chart/scatter-chart.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { HttpClientModule } from '@angular/common/http';
 
 import { MatInputModule } from '@angular/material/input';
@@ -17,15 +17,26 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SelectCategoryComponent } from './select-category/select-category.component';
 import {MatRadioModule} from '@angular/material/radio';
 import { CategoryDataService } from './services/category/category-data.service';
+import { RouterModule } from '@angular/router';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { AuthService } from './services/auth/auth.service';
+import { AuthDataService } from './services/auth/auth-data.service';
+import { BannerComponent } from './banner/banner.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    ScatterChartComponent,
+    DashboardComponent,
     SelectCategoryComponent,
+    LoginPageComponent,
+    BannerComponent,
   ],
   imports: [
+    RouterModule.forRoot([
+      {path: 'dashboard', component: DashboardComponent},
+      {path: 'login', component: LoginPageComponent},
+    ]),
     MatTreeModule,
     MatIconModule,
     BrowserModule,
@@ -38,9 +49,12 @@ import { CategoryDataService } from './services/category/category-data.service';
     MatNativeDateModule,
     ReactiveFormsModule,
     MatRadioModule,
+    RouterModule,
   ],
   providers: [
     CategoryDataService,
+    AuthService,
+    AuthDataService,
   ],
   bootstrap: [AppComponent]
 })

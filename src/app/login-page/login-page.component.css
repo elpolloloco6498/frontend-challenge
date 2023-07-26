@@ -1,0 +1,19 @@
+.login-box {
+    background: lightblue;
+    border-radius: 10px;
+    padding: 40px;
+    width: 400px;
+    height: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}

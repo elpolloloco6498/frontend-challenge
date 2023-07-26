@@ -9,11 +9,11 @@ interface dataPoint {
 }
 
 @Component({
-  selector: 'app-scatter-chart',
-  templateUrl: './scatter-chart.component.html',
-  styleUrls: ['./scatter-chart.component.css']
+  selector: 'dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
 })
-export class ScatterChartComponent implements OnInit {
+export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshGraph()
@@ -109,10 +109,6 @@ export class ScatterChartComponent implements OnInit {
       .range([this.height - this.margin, this.margin]);
 
     console.log(this.maxDate)
-    // axis x
-    // this.svgOnlineDemand.append("g")
-    // .attr("transform", "translate(0," + (this.height-this.margin) + ")")
-    // .call(d3.axisBottom(x));
 
     // axis y
     this.svgOnlineDemand.append("g")
@@ -141,7 +137,7 @@ export class ScatterChartComponent implements OnInit {
     
     this.svgOnlineDemand
       .append("text")
-      .attr("x", 600)
+      .attr("x", 700)
       .attr("y", 30)
       .attr("text-anchor", "middle")
       .text("Online demand of product")
@@ -156,14 +152,6 @@ export class ScatterChartComponent implements OnInit {
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text("Online demand (volume)");
-    
-    this.svgOnlineDemand
-      .append("text")
-      .attr("class", "x label")
-      .attr("text-anchor", "end")
-      .attr("x", this.width/2+10)
-      .attr("y", this.height-8)
-      .text("Date");
   }
 
   drawAverageSearchVolume() {
@@ -184,10 +172,11 @@ export class ScatterChartComponent implements OnInit {
   // Declare the y (vertical position) scale.
     let y = d3.scaleLinear()
       .domain([1.2 * this.minAverageSearchVolume, 1.2 * this.maxAverageSearchVolume])
-      .range([240 - this.margin, this.margin]);
+      .range([200 - this.margin, this.margin]);
 
     // axis x
     this.svgAverageSearchVolume.append("g")
+    .attr("transform", "translate(0," + (240-this.margin) + ")")
     .call(d3.axisBottom(x));
 
     // axis y
