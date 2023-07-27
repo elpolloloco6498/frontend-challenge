@@ -7,7 +7,27 @@
     </a>
 </p>
 
-# Digital Value Frontend Challenge 
+# Digital Value Frontend Challenge
+
+## How to run the application locally
+
+In order to run the application you need to have node.js installed.
+
+Here are the commands that you need tape in order to install the necessary packages to run the application.
+
+```
+npm install
+```
+
+Once the packages are installed you can run the application
+
+```
+npx ng serve
+```
+
+The application is served, you can visit your browser at the url: http://localhost:4200/login
+
+Here are some credentials that you will need to login: user=marco, pass=polo
 
 Welcome to the Digital Value Frontend Challenge! Thank for your interest in participating in our selection process.
 
