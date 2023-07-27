@@ -1,3 +1,11 @@
-<div class="ml-10 mt-5 text-2xl">
-    <span>Analytics</span>
+<div class="banner-box px-10 py-2 mb-5 text-2xl flex justify-between">
+    <span><mat-icon class="mr-2">query_stats</mat-icon>Analytics</span>
+    <div class="account-menu">
+        <button mat-button [matMenuTriggerFor]="menu">
+            <mat-icon>account_circle</mat-icon>{{this.username}}
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="this.logout.emit()">Logout</button>
+        </mat-menu>
+    </div>
 </div>

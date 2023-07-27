@@ -1,7 +1,7 @@
-<div class="container">
+<div class="login-page">
     <div class="login-box">
-        <form class="flex flex-col w-80" (submit)="checkCredentials()" [formGroup]="loginForm">
-            <span class="text-center text-3xl mb-10">ANALYTICS</span>
+        <form class="flex flex-col" (submit)="checkCredentials()" [formGroup]="loginForm">
+            <span class="text-center text-3xl mb-10"><mat-icon class="logo mr-2">query_stats</mat-icon>Analytics</span>
             <mat-form-field>
                 <input formControlName="username" type="text" matInput placeholder="Username">
             </mat-form-field>

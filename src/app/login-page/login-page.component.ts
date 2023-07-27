@@ -19,7 +19,7 @@ export class LoginPageComponent {
   async checkCredentials() {
     const auth = await this.authService.checkCredentialUser(this.loginForm.value.username ?? "", this.loginForm.value.password ?? "")
     if (auth) {
-      this.router.navigate(['dashboard'])
+      this.router.navigate(['dashboard'], { queryParams: { username: this.loginForm.value.username ?? "test" }})
     }
     return false
   }

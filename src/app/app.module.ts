@@ -22,6 +22,7 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { AuthService } from './services/auth/auth.service';
 import { AuthDataService } from './services/auth/auth-data.service';
 import { BannerComponent } from './banner/banner.component';
+import {MatMenuModule} from '@angular/material/menu';
 
 
 @NgModule({
@@ -50,6 +51,7 @@ import { BannerComponent } from './banner/banner.component';
     ReactiveFormsModule,
     MatRadioModule,
     RouterModule,
+    MatMenuModule,
   ],
   providers: [
     CategoryDataService,

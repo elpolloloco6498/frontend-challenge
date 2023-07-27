@@ -2,10 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import * as d3 from 'd3';
 import { CategoryDataService } from '../services/category/category-data.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 interface dataPoint {
   date: Date;
   value: number | null;
+}
+
+interface StateDashboard {
+  currentProductId: number;
+  startDate: Date | undefined | null;
+  endDate: Date | undefined | null;
 }
 
 @Component({
@@ -16,27 +23,73 @@ interface dataPoint {
 export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
+    this.getState()
+    // load all preset from the user
     this.refreshGraph()
   }
 
-  constructor(private categoryDataService: CategoryDataService, private formBuilder: FormBuilder) {}
+  constructor(private categoryDataService: CategoryDataService, private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router) {
+    // get user data from router params
+    this.sessionUser = this.route.snapshot.queryParamMap.get("username") ?? "Guest"
+  }
+
+  getState() {
+    try {
+      const state: StateDashboard = JSON.parse(localStorage.getItem(this.sessionUser) ?? "")
+      this.currentProductId = state.currentProductId
+      this.dateForm.setValue({
+        startDateInput: new Date(state.startDate ?? "2018-07-21") ?? new Date("2018-07-21"),
+        endDateInput: new Date(state.endDate ?? "2022-07-21") ?? new Date("2022-07-21")
+      })
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
+  saveState() {
+    // save all dashboard preset
+    const currentState: StateDashboard = {
+      currentProductId: this.currentProductId,
+      startDate: this.startDate,
+      endDate: this.endDate,
+    }
+    localStorage.setItem(this.sessionUser, JSON.stringify(currentState));
+  }
+
+  logout() {
+    this.saveState()
+    // redirect to login page
+    this.router.navigate(["login"])
+  }
+
+  sessionUser = ""
 
   dateForm = this.formBuilder.group({
-    date: new Date("2022-07-21")
+    startDateInput: new Date("2018-07-21"),
+    endDateInput: new Date("2022-07-21")
   })
 
   title = 'Scatter chart';
   data: any = []
   currentProductId: number = 250162
 
-  private width = 1400;
-  private height = 600;
-  private margin = 60;
+  // graph variables
+  private width = 1300;
+  private height = 640;
+  private heightAverageSearchVolumeGraph = 220;
+  private marginY = 40;
+  private marginX = 0;
+  private marginLeft = 60;
+  // svg references
   private svgOnlineDemand: any;
   private svgAverageSearchVolume: any;
 
-  get maxDate() {
-    return this.dateForm.get("date")?.value
+  get startDate() {
+    return this.dateForm.get("startDateInput")?.value
+  }
+
+  get endDate() {
+    return this.dateForm.get("endDateInput")?.value
   }
 
   refreshGraph() {
@@ -54,6 +107,10 @@ export class DashboardComponent implements OnInit {
 
   get maxVolume() {
     return Math.max(...this.data.map((item: dataPoint) => item.value))
+  }
+
+  get minVolume() {
+    return Math.min(...this.data.map((item: dataPoint) => item.value))
   }
 
   get minAverageSearchVolume() {
@@ -97,18 +154,16 @@ export class DashboardComponent implements OnInit {
       .attr("width", this.width)
       .attr("height", this.height)
       .append("g")
-      .attr("transform", "translate(" + this.margin + "," + 0 + ")");
+      .attr("transform", "translate(" + this.marginLeft + "," + 0 + ")");
     
     let x = d3.scaleUtc()
-      .domain([new Date("2018-07-01"), new Date(this.maxDate?.toDateString() ?? "2020-07-01")])
-      .range([this.margin, this.width - this.margin]);
+      .domain([new Date(this.startDate?.toDateString() ?? "2018-07-01"), new Date(this.endDate?.toDateString() ?? "2022-07-01")])
+      .range([this.marginX, this.width - this.marginX]);
 
   // Declare the y (vertical position) scale.
     let y = d3.scaleLinear()
-      .domain([0, 1.2 * this.maxVolume])
-      .range([this.height - this.margin, this.margin]);
-
-    console.log(this.maxDate)
+      .domain([0.9 * this.minVolume, 1.1 * this.maxVolume])
+      .range([this.height - this.marginY, this.marginY]);
 
     // axis y
     this.svgOnlineDemand.append("g")
@@ -161,22 +216,22 @@ export class DashboardComponent implements OnInit {
     this.svgAverageSearchVolume = d3.select("figure#averageSearchVolume")
       .append("svg")
       .attr("width", this.width)
-      .attr("height", 240)
+      .attr("height", this.heightAverageSearchVolumeGraph)
       .append("g")
-      .attr("transform", "translate(" + this.margin + "," + 0 + ")");
+      .attr("transform", "translate(" + this.marginLeft + "," + 0 + ")");
     
     let x = d3.scaleUtc()
-      .domain([new Date("2018-07-01"), new Date(this.maxDate?.toDateString() ?? "2020-07-01")])
-      .range([this.margin, this.width - this.margin]);
+    .domain([new Date(this.startDate?.toDateString() ?? "2018-07-01"), new Date(this.endDate?.toDateString() ?? "2022-07-01")])
+    .range([this.marginX, this.width - this.marginX]);
 
   // Declare the y (vertical position) scale.
     let y = d3.scaleLinear()
-      .domain([1.2 * this.minAverageSearchVolume, 1.2 * this.maxAverageSearchVolume])
-      .range([200 - this.margin, this.margin]);
+      .domain([0.9 * this.minAverageSearchVolume, 1.1 * this.maxAverageSearchVolume])
+      .range([this.heightAverageSearchVolumeGraph - this.marginY, this.marginY]);
 
     // axis x
     this.svgAverageSearchVolume.append("g")
-    .attr("transform", "translate(0," + (240-this.margin) + ")")
+    .attr("transform", "translate(0," + (this.heightAverageSearchVolumeGraph-this.marginY) + ")")
     .call(d3.axisBottom(x));
 
     // axis y

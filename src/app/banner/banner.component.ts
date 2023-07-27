@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'banner',
@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./banner.component.css']
 })
 export class BannerComponent {
-
+  @Output() logout: EventEmitter<any> = new EventEmitter();
+  @Input() username: string = "";
 }
