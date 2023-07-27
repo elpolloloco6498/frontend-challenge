@@ -1,24 +1,33 @@
 <banner [username]="this.sessionUser" (logout)="logout()"></banner>
 <div class="flex flex-row justify-center">
     <div class="flex flex-col">
+        <div class="flex flex-row items-end justify-between">
+            <form [formGroup]="dateForm">
+                <mat-form-field>
+                    <mat-label>Beginning date</mat-label>
+                    <input formControlName="startDateInput" matInput [matDatepicker]="pickerStartDate" placeholder="Choose a date" (dateInput)="this.drawCharts()">
+                    <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerStartDate></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="ml-2">
+                    <mat-label>End date</mat-label>
+                    <input formControlName="endDateInput" matInput [matDatepicker]="pickerEndDate" placeholder="Choose a date" (dateInput)="this.drawCharts()">
+                    <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerEndDate></mat-datepicker>
+                </mat-form-field>
+            </form>
+            <div class="px-5 py-2 text-right card"> 
+                <span class="text-3xl font-bold"><mat-icon class="mr-2">straighten</mat-icon>Metrics</span>
+                <div class="flex flex-col">
+                    <span class="text-xl">Average search volume: <span class="font-bold">{{averageSearchVolume}}</span></span>
+                    <span class="text-xl mt-2">Yearly variation of average search volume: <span class="font-bold">{{variationAverageSearchVolume}}%</span></span>
+                </div>
+            </div>
+        </div>
         <figure id="onlineDemand"></figure>
-        <figure id="averageSearchVolume"></figure>
     </div>
-    <div class="flex flex-col">
-        <form [formGroup]="dateForm">
-            <mat-form-field>
-                <mat-label>Beginning date</mat-label>
-                <input formControlName="startDateInput" matInput [matDatepicker]="pickerStartDate" placeholder="Choose a date" (dateInput)="this.drawCharts()">
-                <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
-                <mat-datepicker #pickerStartDate></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field class="ml-2">
-                <mat-label>End date</mat-label>
-                <input formControlName="endDateInput" matInput [matDatepicker]="pickerEndDate" placeholder="Choose a date" (dateInput)="this.drawCharts()">
-                <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
-                <mat-datepicker #pickerEndDate></mat-datepicker>
-            </mat-form-field>
-        </form>
+    <div class="flex flex-col pt-3">
+        <span class="text-2xl">Product categories</span>
         <app-select-category (changeProduct)="changeProduct($event)"></app-select-category>
     </div>
 </div>

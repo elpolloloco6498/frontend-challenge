@@ -75,21 +75,19 @@ export class DashboardComponent implements OnInit {
 
   // graph variables
   private width = 1300;
-  private height = 640;
-  private heightAverageSearchVolumeGraph = 220;
+  private height = 720;
   private marginY = 40;
   private marginX = 0;
   private marginLeft = 60;
   // svg references
   private svgOnlineDemand: any;
-  private svgAverageSearchVolume: any;
 
-  get startDate() {
-    return this.dateForm.get("startDateInput")?.value
+  get startDate(): Date {
+    return this.dateForm.get("startDateInput")?.value ?? new Date("2018-07-21")
   }
 
-  get endDate() {
-    return this.dateForm.get("endDateInput")?.value
+  get endDate(): Date {
+    return this.dateForm.get("endDateInput")?.value ?? new Date("2022-07-21")
   }
 
   refreshGraph() {
@@ -113,36 +111,24 @@ export class DashboardComponent implements OnInit {
     return Math.min(...this.data.map((item: dataPoint) => item.value))
   }
 
-  get minAverageSearchVolume() {
-    return Math.min(...this.averageSearchVolume
-      .map((item: dataPoint) => item.value ?? 0)
-    )
-  }
-
-  get maxAverageSearchVolume() {
-    return Math.max(...this.averageSearchVolume
-      .map((item: dataPoint) => item.value ?? 0)
-    )
+  averageSearchVolumeWithinDates(startDate: Date, endDate: Date): number {
+    const points: dataPoint[] = this.data.filter((item: dataPoint) => item.date >= startDate && item.date <= endDate)
+    return points ? Math.round(points.reduce((acc, curr) => acc + (curr.value ?? 0), 0) / points.length) : 0
   }
 
   get averageSearchVolume() {
-    let T = 12; // data point frequency is monthly
-    let dataPoints: dataPoint[] = []
-    for (let i = 0; i < this.data.length; i++) {
-      if (i >= T) {
-        const pt: dataPoint = {
-          date: this.data[i].date,
-          value: (this.data[i].value-this.data[i-T].value)/this.data[i-T].value
-        }
-        dataPoints.push(pt)
-      }
-    }
-    return dataPoints
+    return this.averageSearchVolumeWithinDates(this.startDate, this.endDate)
+  }
+
+  get variationAverageSearchVolume() {
+    const startDate = this.startDate ? new Date(this.startDate.getFullYear()-1, this.startDate.getMonth(), this.startDate.getDay()) : new Date("2018-07-21")
+    const endDate = this.endDate ? new Date(this.endDate.getFullYear()-1, this.endDate.getMonth(), this.endDate.getDay()) : new Date("2022-07-21")
+    const averageSearchVolumePreviousYear = this.averageSearchVolumeWithinDates(startDate, endDate);
+    return Math.round((this.averageSearchVolume-averageSearchVolumePreviousYear)/averageSearchVolumePreviousYear * 100)
   }
 
   drawCharts() {
     this.drawOnlineDemand()
-    this.drawAverageSearchVolume()
   } 
 
   drawOnlineDemand() {  
@@ -164,6 +150,11 @@ export class DashboardComponent implements OnInit {
     let y = d3.scaleLinear()
       .domain([0.9 * this.minVolume, 1.1 * this.maxVolume])
       .range([this.height - this.marginY, this.marginY]);
+
+    // axis x
+    this.svgOnlineDemand.append("g")
+    .attr("transform", "translate(0," + (this.height-this.marginY) + ")")
+    .call(d3.axisBottom(x));
 
     // axis y
     this.svgOnlineDemand.append("g")
@@ -207,73 +198,6 @@ export class DashboardComponent implements OnInit {
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text("Online demand (volume)");
-  }
-
-  drawAverageSearchVolume() {
-    // clear svg canvas
-    d3.select('figure#averageSearchVolume').selectAll('*').remove();
-    // create svg
-    this.svgAverageSearchVolume = d3.select("figure#averageSearchVolume")
-      .append("svg")
-      .attr("width", this.width)
-      .attr("height", this.heightAverageSearchVolumeGraph)
-      .append("g")
-      .attr("transform", "translate(" + this.marginLeft + "," + 0 + ")");
-    
-    let x = d3.scaleUtc()
-    .domain([new Date(this.startDate?.toDateString() ?? "2018-07-01"), new Date(this.endDate?.toDateString() ?? "2022-07-01")])
-    .range([this.marginX, this.width - this.marginX]);
-
-  // Declare the y (vertical position) scale.
-    let y = d3.scaleLinear()
-      .domain([0.9 * this.minAverageSearchVolume, 1.1 * this.maxAverageSearchVolume])
-      .range([this.heightAverageSearchVolumeGraph - this.marginY, this.marginY]);
-
-    // axis x
-    this.svgAverageSearchVolume.append("g")
-    .attr("transform", "translate(0," + (this.heightAverageSearchVolumeGraph-this.marginY) + ")")
-    .call(d3.axisBottom(x));
-
-    // axis y
-    this.svgAverageSearchVolume.append("g")
-    .call(d3.axisLeft(y));
-
-    // add lines
-    this.svgAverageSearchVolume.append("path")
-      .datum(this.averageSearchVolume.filter(d => d.value !== null))
-      .attr("fill", "none")
-      .attr("stroke", "lightblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-        .x((d: any) => x(d.date))
-        .y((d: any) => y(d.value))
-      )
-    
-    this.svgAverageSearchVolume
-      .append("text")
-      .attr("x", 700)
-      .attr("y", 30)
-      .attr("text-anchor", "middle")
-      .text("Average search volume (yearly)")
-      .style("font-size", 16)
-      .style("font-family", "Calibri")
-
-    this.svgAverageSearchVolume
-      .append("text")
-      .attr("class", "y label")
-      .attr("text-anchor", "end")
-      .attr("y", 6)
-      .attr("dy", ".75em")
-      .attr("transform", "rotate(-90)")
-      .text("Average search volume");
-    
-    this.svgAverageSearchVolume
-      .append("text")
-      .attr("class", "x label")
-      .attr("text-anchor", "end")
-      .attr("x", this.width/2+10)
-      .attr("y", this.height-8)
-      .text("Date");
   }
 }
 
